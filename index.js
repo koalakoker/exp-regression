@@ -1,33 +1,41 @@
 var matrix = require('matrix-js');
-
-// var a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-// var A = matrix(a);
-// var B = matrix(A.trans());
-// console.log(A.prod(B)); // returns [[4, 6, 8], [10, 12, 14], [16, 18, 20]]
-
-
-
 const data = require('./data.json');
-const jacob = [];
-const dy = [];
-let b1 = 35;
-let b2 = 15;
-let b3 = 22;
-data.forEach(element => {
-  jacob.push(Jacob(element.x, b2, b3));
-  dy.push(Y(element.x, element.y, b1, b2, b3));
-});
 
-const J = matrix(jacob);
-const JT = matrix(J.trans());
-const A = matrix(JT.prod(J));
-const AInv = matrix(A.inv());
+let b1 = 1;
+let b2 = 1;
+let b3 = 1;
+console.log(b1, b2, b3);
 
-const DYT = matrix(matrix([dy]).trans());
-const JY = matrix(JT.prod(DYT));
+for (let i = 0; i < 10; i++) {
+  let dB = iterate(b1, b2, b3);
+  b1 += dB[0];
+  b2 += dB[1];
+  b3 += dB[2];
+  console.log(b1, b2, b3, '[', dB[0], dB[1], dB[2], ']');
+}
 
-const dB = AInv.prod(JY);
-console.log(dB);
+function iterate(b1, b2, b3) {
+  const jacob = [];
+  const dy = [];
+  
+  data.forEach(element => {
+    jacob.push(Jacob(element.x, b2, b3));
+    dy.push(Y(element.x, element.y, b1, b2, b3));
+  });
+
+  const J = matrix(jacob);
+  const JT = matrix(J.trans());
+  const A = matrix(JT.prod(J));
+  const AInv = matrix(A.inv());
+
+  const DYT = matrix(matrix([dy]).trans());
+  const JY = matrix(JT.prod(DYT));
+
+  const dB = AInv.prod(JY);
+  
+  return matrix(dB).trans()[0];
+}
+
 
 function Jacob(x, b2, b3 ) {
   const jacob = [];

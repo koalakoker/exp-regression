@@ -23,13 +23,11 @@ const JT = matrix(J.trans());
 const A = matrix(JT.prod(J));
 const AInv = matrix(A.inv());
 
-console.log(matrix(dy).trans());
-// const DY = matrix(dy);
-// const JY = matrix(J.prod(dy));
-// console.log(JY());
-// const dB = AInv.prod(JY);
+const DYT = matrix(matrix([dy]).trans());
+const JY = matrix(JT.prod(DYT));
 
-//console.log(dB);
+const dB = AInv.prod(JY);
+console.log(dB);
 
 function Jacob(x, b2, b3 ) {
   const jacob = [];

@@ -3,7 +3,7 @@ const data = require('./data.json');
 
 let b1 = 1;
 let b2 = 1;
-let b3 = 1;
+let b3 = 19;
 console.log(b1, b2, b3);
 
 for (let i = 0; i < 10; i++) {

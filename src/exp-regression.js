@@ -1,17 +1,26 @@
 var matrix = require('matrix-js');
-const data = require('./data.json');
+const data = require('../data.json');
 
-let b1 = 1;
+let b1 = data[0].y;
 let b2 = 1;
-let b3 = 19;
-console.log(b1, b2, b3);
+let b3 = 20;
+//console.log(b1, b2, b3);
 
 for (let i = 0; i < 10; i++) {
   let dB = iterate(b1, b2, b3);
   b1 += dB[0];
   b2 += dB[1];
   b3 += dB[2];
-  console.log(b1, b2, b3, '[', dB[0], dB[1], dB[2], ']');
+  //console.log(b1, b2, b3, '[', dB[0], dB[1], dB[2], ']');
+}
+
+if (typeof window !== 'undefined') {
+  window.data = data;
+  window.b1 = b1;
+  window.b2 = b2;
+  window.b3 = b3;
+} else {
+  console.log('executing with node');
 }
 
 function iterate(b1, b2, b3) {

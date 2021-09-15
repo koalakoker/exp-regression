@@ -2,9 +2,10 @@
   "name": "regression",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "sketch.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "browserify src/exp-regression.js -o src/bundle.js",
+    "run": "node ./src/exp-regression.js"
   },
   "author": "",
   "license": "ISC",

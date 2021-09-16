@@ -3,18 +3,34 @@ let graph =  { x: 800 * zoom, y:600 * zoom };
 let offset = { x: 0, y: 25};
 let factor = { x: graph.x / 100, y: graph.y / 30};
 let data = [];
+let real = [];
 let extimated = [];
 
 function setup() {
   createCanvas(graph.x, graph.y);
+  
   const b0 = Math.floor(Math.random() * 15) + 25;
   const b1 = Math.floor(Math.random() * 10) + 10;
-  const b3 = Math.floor(Math.random() * 20) + 10;
+  const b2 = Math.floor(Math.random() * 20) + 10;
+  let b = [b0,b1,b2];
+  const finalValue = b0 + b1;
+  const tau = b2;
 
-  let b = [b0,b1,b3];
-  data = createFunction(b, 100, 1.5);
-  b = expRegression(data, 4);
+  nPoint = 50;
+  noise = 0.7;
+  data = createFunction(b, nPoint, noise);
+
+  real = createFunction(b, 100, 0);
+  
+  b = expRegression(data, 10);
+  const extFinalValue = b[0] + b[1];
+  const extTau = b[2];
   extimated = createFunction(b);
+
+  const error = (Math.abs(finalValue-extFinalValue) / finalValue) * 100;
+  const tauError = (Math.abs(tau - extTau) / tau) * 100;
+  console.log(finalValue, extFinalValue, error);
+  console.log(tau, extTau, tauError);
 }
 
 function createFunction(b, length = 100, randomize = 0) {
@@ -47,6 +63,8 @@ function draw() {
   
   drawCurvePoints(data, 'black', 3);
   drawCurvePoints(data, 'black', 5, POINTS);
+
+  drawCurvePoints(real, 'green', 2);
   
   drawCurvePoints(extimated, 'red', 3);
 }

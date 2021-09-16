@@ -1,35 +1,42 @@
 var matrix = require('matrix-js');
-const data = require('../data.json');
+let data = [];
 
-let b1 = data[0].y;
-let b2 = 1;
-let b3 = 20;
-//console.log(b1, b2, b3);
-
-for (let i = 0; i < 10; i++) {
-  let dB = iterate(b1, b2, b3);
-  b1 += dB[0];
-  b2 += dB[1];
-  b3 += dB[2];
-  //console.log(b1, b2, b3, '[', dB[0], dB[1], dB[2], ']');
-}
-
-if (typeof window !== 'undefined') {
-  window.data = data;
-  window.b1 = b1;
-  window.b2 = b2;
-  window.b3 = b3;
+if (nodeRun()) {
+  data = require('../data.json');
+  expRegression(data, 4);
 } else {
-  console.log('executing with node');
+  window.expRegression = expRegression;
 }
 
-function iterate(b1, b2, b3) {
+function expRegression(data, iteration = 10) {
+  
+  let minY = data[0].y;
+  let maxY = data[data.length - 1].y;
+  let b = [minY, maxY - minY, 20];
+  if (nodeRun()) {
+    console.log(b);
+  }
+  
+  for (let i = 0; i < iteration; i++) {
+    let dB = iterate(b, data);
+    for (let index = 0; index < b.length; index++) {
+      b[index] += dB[index];
+    }
+    if (nodeRun()) {
+      console.log(paramsToString(b) + ' ' + paramsToString(dB, 6));
+    }
+  }
+  
+  return b; 
+}
+
+function iterate(b, data) {
   const jacob = [];
   const dy = [];
   
   data.forEach(element => {
-    jacob.push(Jacob(element.x, b2, b3));
-    dy.push(Y(element.x, element.y, b1, b2, b3));
+    jacob.push(Jacob(element.x, b));
+    dy.push(Y(element.x, element.y, b));
   });
 
   const J = matrix(jacob);
@@ -46,21 +53,35 @@ function iterate(b1, b2, b3) {
 }
 
 
-function Jacob(x, b2, b3 ) {
+function Jacob(x, b ) {
   const jacob = [];
-  const exp = Math.exp(-x / b3);
+  const exp = Math.exp(-x / b[2]);
   jacob.push(1);
   jacob.push(1-exp);
-  jacob.push(-(b2*x*exp)/(b3*b3));
+  jacob.push(-(b[1]*x*exp)/(b[2]*b[2]));
   return jacob;
 }
 
-function f(x, b1, b2, b3) {
-  const exp = Math.exp(-x / b3);
-  return b1 + (b2 * (1 - exp)); 
+function f(x, b) {
+  const exp = Math.exp(-x / b[2]);
+  return b[0] + (b[1] * (1 - exp)); 
 }
 
-function Y(x, y, b1, b2, b3) {
+function Y(x, y, b) {
   const dy = [];
-  return(y - f(x, b1, b2, b3));
+  return(y - f(x, b));
+}
+
+function nodeRun() { return (typeof window === 'undefined') };
+
+function paramsToString(b, decimal = 3) {
+  let out = '[';
+  b.forEach((element, index) => {
+    out += element.toFixed(decimal);
+    if (index < b.length - 1) {
+      out += ', ';
+    }
+  });
+  out += ']';
+  return out;
 }

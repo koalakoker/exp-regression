@@ -6,6 +6,19 @@ let data = [];
 let real = [];
 let extimated = [];
 
+function newDataReceived(data) {
+  console.log(data);
+
+  // Entire file
+  //console.log(this.result);
+
+    // // By lines
+    // var lines = this.result.split('\n');
+    // for (var line = 0; line < lines.length; line++) {
+    //   console.log(lines[line]);
+    // }
+}
+
 function setup() {
   createCanvas(graph.x, graph.y);
   
